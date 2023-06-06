@@ -1,0 +1,529 @@
+解壓縮
+!unzip "zip檔路徑" -d "預存放colab路徑"
+!tar zxf "路徑+檔名.tar.gz"
+
+影像處理:import cv2
+讀取影像張量 : img = cv2.imread("jpg檔路徑 or png檔路徑", cv2.IMREAD_GRAYSCALE)
+存取影像張量 : cv2.imwrite("預存放檔案路徑", "影像張量")
+縮放影像大小(印象中三通道也可照用) : img = cv2.resize(img, (200,200))
+
+多維張量處理:import numpy as np
+張量大小 : array.shape 
+水平放置一維張量 : np.hstack([a1,a2,a3,a4,a5,a6])
+垂直放置一維張量 : np.vstack([a1,a2,a3,a4,a5,a6])
+改變張量大小 : array.reshape(m,n)
+中括弧裡面是索引 : list1[np.where(list1>0)]
+儲存成np的形式:np.save('路徑.npy', array物件名)
+讀取:np.load("路徑.npy")
+np.zeros(400)
+均勻分布(0,1)於自訂大小的二維向量:np.random.rand(row, col)
+解方程式(Ax=b) : x = np.linalg.lstsq(A, b, rcond=None)[0]
+投影矩陣方程式(Ax=b) : x = np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
+投影矩陣方程式(近似b) : A * x = A * np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
+矩陣各元素兩者取大 : np.maximum(M, 0)
+矩陣乘法 : np.dot(M1, M2)
+
+
+資料框處理:import pandas as pd
+csv檔讀取 : df =  pd.read_csv("csv檔路徑", sep=",", header=0)
+有多少種 : np.unique(df["col_1"]
+刪除 : df.drop(["col_1", "col_2"], axis=1 ) ##axis=1是column，axis=0是row
+指定df[布林值] : df[df["class"]=="negative"]  ##第1、3、5、6 row是True
+合併檔案 : pd.concat([df1, df2]) #上下concatenate
+統計col種數 : df["col_1"].value_counts()
+刪去某個子集 df (df=A+B，幫df+B再刪去重複，A+B+B):
+tmp_df = df.append(某個子集B)  
+df = tmp_df.drop_duplicates(subset=["filename", "class"], keep=False)
+存檔df : df.to_csv("預存放路徑.csv", index=False, sep=",")
+df["col_1"].value_counts()
+df.iloc[i, j]
+df.loc["row", "column"] 其實就是 df["row"]["column"]
+
+
+
+from sklearn.utils import resample
+抽樣(資料不平衡) : df_resample = resample(df, replace=False, random_state=隨機種子, n_samples=抽n個) #取後不放回
+
+from sklearn.utils import shuffle
+洗牌(公正) : df_shuffle = shuffle(df, random_state=777)
+
+
+from sklearn.model_selection import train_test_split
+切分資料(有分層切分) : df1, df2 = train_test_split(df1, train_size=0.8, random_state=777, stratify=df["class"])
+
+for 迴圈理解
+重複同件事並記錄，已知結果有n個(求list1) (有n個結果)
+list1 = []
+for i in range(n):
+    tmp_1 = f(i)
+    tmp_2 = f(i, tmp_1)
+    ……
+    list1.append(tmp_n)
+list1 = np.array(list1)
+直到符合條件停止(求i) (求1個中獎點  for -> if 中獎就中斷)
+for i in range(n):
+    if list1[i] >=< num:
+        break
+print(i)
+指定標記為0、1、...
+list1 = np.zeros(n)
+for i in tqdm(range(len(df))):
+    label = df[i]["class"]
+    if label == "negative":
+        want = 0
+    elif label == "positive"
+        want = 1
+    else:
+        want = 2
+    list1[i] = want
+list1 = list1.reshape(400,1)
+求質數(若因數只有2個就是質數) (求多個中獎點 for -> if 中獎就紀錄)
+## for 從2到100裡 
+## if 偵測到質數收集起來
+## 再寫出是否維質數的函式就好
+def isPrime(number):  ## T or F
+  list2 = []
+  for i in range(2, number):
+    if number % i == 0 :
+      list2.append(i)
+  if len(list2)==0:
+    return True
+  else:
+    return False
+
+list1 = [] 
+for i in range(2,100):
+  if isPrime(i):  ## T or F
+    list1.append(i)
+list1 
+
+
+import matplotlib.pyplot as plt(待加強)
+plt.imshow(img)
+for i in range(20):
+    plt.subplot(4,5,i+1) ##空間為4*5排序
+    plt.imshow(cv2.imread('/content/data/train/x/'+os.listdir('/content/data/train/x')[i]))
+不熟，先略過
+plt.figure(1, figsize=(20, 20))
+n = 0
+for i in [137, 159, 189, 56, 397]:
+    n += 1
+    img = W[:,i].reshape(200,200)
+    plt.subplot(1, 5, n) ##空間為1*5排序
+    plt.axis('off')
+    plt.imshow(img, cmap=plt.get_cmap('gray'))
+    plt.title(random_label+' '+str(i), y=0.05)
+plt.show()
+
+
+
+import os
+len(os.listdir(資料夾路徑))  有時候會讀取到奇怪的內建檔案
+建立檔案到colab : os.makedirs("/content/...")
+
+import heapq
+heapq.nlargest(5, array) ##從array裡面選取前5大的值
+
+
+
+神經網絡
+x_train = 資料為row
+y_train = y1.reshape(1684,1)
+
+## 神經元個數 : 400->1
+inputs = keras.Input(shape=(400))
+outputs = keras.layers.Dense(1, activation="sigmoid")(inputs)
+model = keras.Model(inputs=inputs, outputs=outputs)
+
+callbacks = [tf.keras.callbacks.ModelCheckpoint("參數檔名.h5", save_best_only=True, verbose = 0)]
+model.compile(optimizer = keras.optimizers.Adam(learning_rate=0.001),
+loss = "binary_crossentropy",
+              	metrics=["accuracy"])
+history = model.fit(
+x = x_train, 
+y = y_train, 
+validation_data=(x_val, y_val), 
+epochs=200, 
+callbacks=[callbacks]) 
+model.load_weights("參數檔名.h5")
+model.evaluate(x_test, y_test)
+
+返回模型參數與預測類別:model.get_weights()
+
+
+影像辨識
+1.準備好資料平衡的dataframe 2.資料切分(train_test_split) 3.資料增補(ImageDataGenerator) 4.連接dataframe與directory(flow_from_dataframe) 5.模型(model,callbacks,compile,history(fit)) 6.結果(load_weights,evaluate)
+資料增廣(只有data)
+train_datagen = ImageDataGenerator(
+                   rescale = 1./255.,
+                   rotation_range = 5,
+                   width_shift_range = 0.05,
+                   height_shift_range = 0.05, 
+                   shear_range = 0.05,
+                   zoom_range = 0.05,
+                   horizontal_flip = False,
+                   vertical_flip = False)
+test_datagen = ImageDataGenerator(rescale = 1./255.)  ## 不會對影像做模型更改
+
+增廣資料集、dataframe、資料夾 之連結
+train_gen = train_datagen.flow_from_dataframe(
+                         dataframe = train_df,
+                         directory=train_path,
+                         x_col="filename", 
+                         y_col="class",
+                         target_size=(200,200),
+                         color_mode = "grayscale", ##將資料轉成灰階
+                         batch_size=32, 
+                         class_mode="binary") ##categorical
+valid_gen = test_datagen.flow_from_dataframe(
+                         dataframe = valid_df,
+                         directory=valid_path,
+                         x_col="filename",
+                         y_col="class",
+                         target_size=(200,200),
+                         color_mode = "grayscale",
+                         batch_size=1, 
+                         class_mode="binary")
+test_gen = test_datagen.flow_from_dataframe(
+ dataframe = test_df,
+                         directory=test_path,
+                         x_col="filename", 
+                         y_col="class", 
+                         target_size=(200,200),
+                         color_mode = "grayscale",
+                         batch_size=1,
+                         class_mode="binary",
+                         shuffle = False)
+
+以Directory為主連結資料
+train = tf.keras.preprocessing.image_dataset_from_directory(
+        "/content/Data/train",
+        labels="inferred",  ##標籤是從目錄結構生成的
+        label_mode="categorical",
+        class_names=["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"],
+        shuffle=True,
+        seed=77777,
+        batch_size=batch_size,
+        image_size=(32, 32),
+    )
+
+valid = tf.keras.preprocessing.image_dataset_from_directory(
+        "/content/Data/val",
+        labels="inferred",
+        label_mode="categorical",
+        class_names=["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"],
+        shuffle=True,
+        seed=77777,
+        batch_size=batch_size,
+        image_size=(32, 32),
+)
+
+test = tf.keras.preprocessing.image_dataset_from_directory(
+        "/content/Data/test",
+        labels="inferred",
+        label_mode="categorical",
+        class_names=["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"],
+        shuffle=False,
+        seed=77777,
+        batch_size=batch_size,
+        image_size=(32, 32),
+)
+
+
+
+卷積網絡模型(預訓練模型)
+base_model = tf.keras.applications.ResNet50V2(weights="imagenet", input_shape = (200,200,3), include_top=False)
+for layer in base_model.layers:  ##使用imagenet權重且不微調
+    layer.trainable = False
+model = tf.keras.Sequential([
+    base_model, 
+    tf.keras.layers.GlobalAveragePooling2D(), ##自動池化到(1, 1, channel)
+    tf.keras.layers.Dense(1, activation="sigmoid")
+])
+
+監控模型訓練過程
+callbacks = [
+    tf.keras.callbacks.ModelCheckpoint("參數檔名.h5", save_best_only=True, verbose = 0),
+    tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=3, verbose=1),
+    tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", patience=5, factor=0.5, verbose=1)
+]
+
+模型編譯
+model.compile(
+optimizer = keras.optimizers.Adam(learning_rate=0.001),
+loss = 'binary_crossentropy', ##categorical_crossentropy
+metrics=['accuracy'])
+
+模型擬合(train_gen裡面 有資料，有答案也就可以擬合了)
+history = model.fit(train_gen, 
+           validation_data=valid_gen, 
+           epochs=50, 
+           callbacks=[callbacks])
+
+自建立模型(單一通道，CBAM，如何加入attention?)
+inputs = keras.Input(shape=(200, 200, 1))
+x = keras.layers.Conv2D(filters=32, kernel_size=(3,3))(inputs)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
+x = keras.layers.MaxPooling2D(pool_size=2)(x)
+x = keras.layers.Conv2D(filters=32, kernel_size=(3,3))(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
+x = keras.layers.MaxPooling2D(pool_size=2)(x)
+x = keras.layers.Conv2D(filters=64, kernel_size=(3,3))(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
+x = keras.layers.MaxPooling2D(pool_size=2)(x)
+x = keras.layers.Conv2D(filters=64, kernel_size=(3,3))(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
+x = keras.layers.MaxPooling2D(pool_size=2)(x)
+x = keras.layers.Conv2D(filters=128, kernel_size=(3,3))(x)
+x = keras.layers.BatchNormalization()(x)
+x = keras.layers.Activation("relu")(x)
+x = keras.layers.Flatten()(x)  ##把三維張量直接攤平成一維
+x = keras.layers.Dropout(0.5)(x)
+outputs = keras.layers.Dense(1, activation="sigmoid")(x)
+model = keras.Model(inputs=inputs, outputs=outputs)
+
+
+模型架構總攬 : model.summary()
+下載模型參數到此模型架構 : model.load_weights("參數檔名路徑.h5")
+評估準確率 : model.evaluate(test_gen) ##test_gen資料與df已連結
+模型架構畫圖 : keras.utils.plot_model(model, rankdir="LR", show_shapes=True)
+深度學習結果畫圖
+accuracy = history.history["accuracy"]
+val_accuracy = history.history["val_accuracy"]
+loss = history.history["loss"]
+val_loss = history.history["val_loss"]
+epochs = range(1, len(accuracy) + 1)
+plt.plot(epochs, accuracy, "bo", label="Training accuracy")
+plt.plot(epochs, val_accuracy, "b", label="Validation accuracy")
+plt.title("Training and validation accuracy")
+plt.legend()
+plt.figure()
+plt.plot(epochs, loss, "bo", label="Training loss")
+plt.plot(epochs, val_loss, "b", label="Validation loss")
+plt.title("Training and validation loss")
+plt.legend()
+plt.show()
+
+混淆矩陣
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
+import seaborn as sns
+confusion_matrix(predict, true)
+roman = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"]
+cm = confusion_matrix(predict, true)
+sns.set()
+fig, ax = plt.subplots()
+sns.heatmap(cm, annot=True, ax=ax, fmt='d', cmap='YlOrRd',xticklabels=roman, yticklabels=roman)
+ax.set_title('test images’)
+ax.set_xlabel('true') 
+ax.set_ylabel('predict') 
+plt.show()
+
+
+
+
+
+機器學習
+Logistic regression 
+from sklearn.linear_model import LogisticRegression
+# 建立Logistic模型
+logisticModel = LogisticRegression(random_state=777)
+# 使用訓練資料訓練模型
+logisticModel.fit(X_train, y_train)
+# 使用訓練資料預測分類
+predicted = logisticModel.predict(X_train)
+# 預測成功的比例
+print('訓練集: ',logisticModel.score(X_train,y_train))
+print('測試集: ',logisticModel.score(X_test,y_test))
+
+k-nearest neighbors(KNN)
+from sklearn.neighbors import KNeighborsClassifier
+# 建立KNN模型
+knnModel = KNeighborsClassifier(n_neighbors=3)
+# 使用訓練資料訓練模型
+knnModel.fit(X_train,y_train)
+# 使用訓練資料預測分類
+predicted= knnModel.predict(X_train)
+# 預測成功的比例
+print('訓練集: ',knnModel.score(X_train,y_train))
+print('測試集: ',knnModel.score(X_test,y_test))
+
+支持向量機 (Support Vector Machine, SVM)
+from sklearn import svm
+# 建立SVM模型
+linearSvcModel=svm.LinearSVC(C=1, max_iter=10000)
+svcModel=svm.SVC(kernel='linear', C=1)
+polyModel=svm.SVC(kernel='poly', degree=3, gamma='auto', C=1)
+rbfModel=svm.SVC(kernel='rbf', gamma=0.7, C=1)
+# 使用訓練資料訓練模型
+linearSvcModel.fit(X_train, y_train)
+# 使用訓練資料預測分類
+predicted=linearSvcModel.predict(X_train)
+# 預測成功的比例
+print('訓練集: ',linearSvcModel.score(X_train,y_train))
+print('測試集: ',linearSvcModel.score(X_test,y_test))
+
+分類決策樹
+from sklearn.tree import DecisionTreeClassifier
+# 建立DecisionTree模型
+decisionTreeModel = DecisionTreeClassifier(criterion = 'entropy', max_depth=6, random_state=42)
+# 使用訓練資料訓練模型
+decisionTreeModel.fit(X_train, y_train)
+# 使用訓練資料預測分類
+predicted = decisionTreeModel.predict(X_train)
+print('訓練集: ',decisionTreeModel.score(X_train,y_train))
+print('測試集: ',decisionTreeModel.score(X_test,y_test))
+
+隨機森林
+from sklearn.ensemble import RandomForestClassifier
+# 建立RandomForest模型
+randomForestModel = RandomForestClassifier(n_estimators=100, criterion = 'gini')
+# 使用訓練資料訓練模型
+randomForestModel.fit(X_train, y_train)
+# 使用訓練資料預測分類
+predicted = randomForestModel.predict(X_train)
+# 預測成功的比例
+print('訓練集: ',randomForestModel.score(X_train,y_train))
+print('測試集: ',randomForestModel.score(X_test,y_test))
+
+XGBoost
+from xgboost import XGBClassifier
+# 建立XGBClassifier模型
+xgboostModel = XGBClassifier(n_estimators=100, learning_rate= 0.3)
+# 使用訓練資料訓練模型
+xgboostModel.fit(X_train, y_train)
+# 使用訓練資料預測分類
+predicted = xgboostModel.predict(X_train)
+# 預測成功的比例
+print('訓練集: ',xgboostModel.score(X_train,y_train))
+print('測試集: ',xgboostModel.score(X_test,y_test))
+
+Stacking 模型
+estimators = [
+    ('rf', RandomForestClassifier()),
+    ('svc', svm.SVC()),
+    ('knn', KNeighborsClassifier()),
+    ('dt', DecisionTreeClassifier())
+]
+clf = StackingClassifier(
+cv=5, estimators=estimators, final_estimator= LogisticRegression()
+)
+clf.fit(X_train, y_train)
+predicted = clf.predict(X_train)
+print('訓練集: ',clf.score(X_train,y_train))
+print('測試集: ',clf.score(X_test,y_test))
+##準確率也可使用 accuracy_score
+from sklearn.metrics import accuracy_score
+predicted = clf.predict(X_train)
+print('訓練集準確率: ',accuracy_score(y_train, predicted))
+predicted = clf.predict(X_test)
+print('測試集準確率:',accuracy_score(y_test, predicted))
+
+Blending
+要先建立model架構
+model = keras.Model(inputs=inputs, outputs=outputs)
+
+## 每個model得到527個預測值，共60個model (column)(shape:527*60)
+## 1.目的是希望把所有model的訓練集之預測值收集起來
+## 2.把所有訓練集之預測值 與 真實值 hstack 合併
+## 3.神經網絡分類，input為訓練集之預測值，output為真實值
+
+把所有model的訓練集之預測值收集起來
+list_preds = np.zeros(527*60).reshape(527,60)  ##527個data，60個model，col的方式放置
+test_preds = np.zeros(400*60).reshape(400,60) 
+for i in tqdm(range(1,61)):
+  path = "路徑" + str(i) + ".h5"
+  model.load_weights(path) ##先有model架構，再下載參數
+  preds = ((model.predict(train_stacking_gen)>0.5).astype("int32")).reshape(527,)
+  preds_test = ((model.predict(test_gen)>0.5).astype("int32")).reshape(400,)
+  list_preds[:,i-1] = preds.reshape(527,)  ## train_stacking_gen 的特徵，等等找權重
+  test_preds[:,i-1] = preds_test.reshape(400,) ## 先找出特徵，等等測試權重好不好
+print(list_preds)
+print(test_preds)
+
+神經網絡分類
+num_model=60
+inputs = keras.Input(shape=(num_model,))
+outputs = keras.layers.Dense(1, activation="relu")(inputs)
+model_meta = keras.Model(inputs=inputs, outputs=outputs)
+model_meta.summary()
+
+callbacks = [
+tf.keras.callbacks.ModelCheckpoint("路徑.h5", save_best_only=True, verbose = 0),
+    tf.keras.callbacks.EarlyStopping(patience=10, monitor="val_accuracy", verbose=1),
+    tf.keras.callbacks.ReduceLROnPlateau(monitor="val_accuracy", factor=0.5, patience=50, verbose=1)
+]
+
+model_meta.compile(optimizer = keras.optimizers.Adam(learning_rate=0.01),
+          loss="binary_crossentropy",
+          metrics=["accuracy"])
+
+history = model_meta.fit(x = x_train_y_train[:,0:60],
+              y = x_train_y_train[:,60],
+              validation_data = (x_train_y_train_Val[:,0:60],x_train_y_train_Val[:,60]),
+              epochs=500,
+              callbacks=[callbacks])
+
+檢視權重，查看哪一model較為重要
+model_meta.get_weights()
+
+
+論文最終測試??
+
+
+解
+2個未知數->2個方程式(恰一組)
+# 3x+2y=21
+# -2x-3y=-24
+A = np.array( [[3, 2],
+[-2, -3]])
+b = np.array([[21, -24]]).reshape(2,1)
+
+解方程式(Ax=b) : x = np.linalg.lstsq(A, b, rcond=None)[0]
+投影矩陣方程式(Ax=b) : x = np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
+ 3個未知數->9個方程式(無實數解->求近似解mse)
+A = np.array([[34654, -34654*34654, -34654*3720],
+         		[34872, -34872*34872, -34872*3132],
+         		[32219, -32219*32219, -32219*1805],
+          		[32908, -32908*32908, -32908*1967],
+          		[34003, -34003*34003, -34003*3029],
+          		[37004, -37004*37004, -37004*4125],
+         		[37146, -37146*37146, -37146*4709],
+         		[40057, -40057*40057, -40057*6432],
+          		[40511, -40511*40511, -40511*9332]])
+b = np.array([-34, 218, -2653, 689, 1095, 3001, 142, 2911, 454]).reshape(9,1)
+x = np.linalg.inv(A.T.dot(A)).dot(A.T).dot(b)
+
+顯微鏡之顏色校正演算法(無實數解->求近似解mse)
+## A1到A6(input)
+a1=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+a2=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+a3=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+a4=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+a5=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+a6=np.array([random.randint(0,255),random.randint(0,255),random.randint(0,255)]).reshape(3,1)
+
+def color_OLS(a1,a2,a3,a4,a5,a6):
+  c1 = np.array([34,81,138]).reshape(3,1)
+  c2 = np.array([116,35,51]).reshape(3,1)
+  c3 = np.array([145,44,70]).reshape(3,1)
+  c4 = np.array([65,108,48]).reshape(3,1)
+  c5 = np.array([206,70,180]).reshape(3,1)
+  c6 = np.array([11,40,102]).reshape(3,1)
+
+  in_para = np.hstack([a1,a2,a3,a4,a5,a6]).T
+  ans_para = np.zeros(9).reshape(3,3)
+
+  for i in range(3):
+    out_para = np.hstack([c1,c2,c3,c4,c5,c6])[i].reshape(6,1)
+    ans = np.linalg.inv(in_para.T.dot(in_para)).dot(in_para.T).dot(out_para).reshape(1,3)
+    ans_para[i] = ans
+
+  return ans_para
+
+ols_matrix = color_OLS(a1,a2,a3,a4,a5,a6)
+ols_matrix
